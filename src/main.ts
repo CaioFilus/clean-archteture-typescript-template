@@ -1,13 +1,16 @@
-import express from "express";
-import ExpressAdapter from "./infra/adapters/ExpressAdapter";
-import AuthHttpController from "./infra/controllers/http/AuthHttpController";
-import {HttpController} from "./infra/controllers/http/http";
+import AuthHttpController from "./InterfaceAdapters/controllers/http/AuthHttpController";
 
-const app = express()
-app.use(express.json())
+import LoginUseCaseFactory from "./Main/factories/UseCase/LoginUseCaseFactory";
+
+import webserver from "./Main/factories/webserverFactory";
 
 
-const expressAdapter = new ExpressAdapter(app);
-const authHttpController = new AuthHttpController(expressAdapter);
+const authHttpController = new AuthHttpController(LoginUseCaseFactory());
+console.log(AuthHttpController.prototype, authHttpController, authHttpController.constructor.prototype);
 
-export default app;
+//
+// console.log(authHttpController);
+webserver.registerController(authHttpController);
+
+webserver.start();
+

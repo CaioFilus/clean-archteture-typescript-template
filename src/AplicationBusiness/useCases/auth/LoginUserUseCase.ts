@@ -1,10 +1,10 @@
 import {Err, Ok} from "ts-results";
 import IUserRepository from "../../repository/IUserRepository";
 import IHashService from "../../services/IHashService";
-import NotFoundError from "../../../domain/errors/NotFoundError";
-import LoginInvalidError from "../../../domain/errors/LoginInvalidError";
+import NotFoundError from "../../../EnterpriseBusiness/errors/NotFoundError";
+import LoginInvalidError from "../../../EnterpriseBusiness/errors/LoginInvalidError";
 import ITokenService from "../../services/ITokenService";
-import {ILoginUseCase} from "../../../domain/useCases/auth/LoginUseCases";
+import {ILoginUseCase} from "../../../EnterpriseBusiness/useCases/auth/LoginUseCases";
 
 export class LoginUseCase implements ILoginUseCase {
 

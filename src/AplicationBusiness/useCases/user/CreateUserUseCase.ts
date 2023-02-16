@@ -1,11 +1,11 @@
 import {Err, Ok, Result} from "ts-results";
-import UseCase from "../../../domain/useCases/useCase";
+import UseCase from "../../../EnterpriseBusiness/useCases/useCase";
 import IUserRepository from "../../repository/IUserRepository";
-import {UserType} from "../../../domain/entities/user.entity";
-import DatabaseError from "../../../domain/errors/DatabaseError";
+import {UserType} from "../../../EnterpriseBusiness/entities/user.entity";
+import DatabaseError from "../../../EnterpriseBusiness/errors/DatabaseError";
 import IHashService from "../../services/IHashService";
-import InvalidEmailError from "../../../domain/errors/InvalidEmailError";
-import InvalidPasswordError from "../../../domain/errors/InvalidPasswordError";
+import InvalidEmailError from "../../../EnterpriseBusiness/errors/InvalidEmailError";
+import InvalidPasswordError from "../../../EnterpriseBusiness/errors/InvalidPasswordError";
 
 export interface CreateUserForm {
     name: string

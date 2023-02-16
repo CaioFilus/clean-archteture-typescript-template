@@ -1,4 +1,4 @@
-import IHashService from "../../data/services/IHashService";
+import IHashService from "../../AplicationBusiness/services/IHashService";
 
 export default class HashService implements IHashService {
     compareSha256(text: string, hashedText: string): boolean {

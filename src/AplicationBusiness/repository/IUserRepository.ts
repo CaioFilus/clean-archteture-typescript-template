@@ -1,7 +1,7 @@
 import {Result} from "ts-results";
-import DatabaseError from "../../domain/errors/DatabaseError";
-import User from "../../domain/entities/user.entity";
-import NotFoundError from "../../domain/errors/NotFoundError";
+import DatabaseError from "../../EnterpriseBusiness/errors/DatabaseError";
+import User from "../../EnterpriseBusiness/entities/user.entity";
+import NotFoundError from "../../EnterpriseBusiness/errors/NotFoundError";
 
 export type CreateUserRepository = Omit<User, 'id'>
 export type CreateAdminRepository = Omit<CreateUserRepository, 'type'>

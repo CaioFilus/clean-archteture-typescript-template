@@ -3,10 +3,10 @@ import IUserRepository, {
     CreateAccountRepository,
     CreateAdminRepository,
     CreateCooperatingRepository
-} from "../../data/repository/IUserRepository";
-import DatabaseError from "../../domain/errors/DatabaseError";
-import User, {UserType} from "../../domain/entities/user.entity";
-import NotFoundError from "../../domain/errors/NotFoundError";
+} from "../../AplicationBusiness/repository/IUserRepository";
+import DatabaseError from "../../EnterpriseBusiness/errors/DatabaseError";
+import User, {UserType} from "../../EnterpriseBusiness/entities/user.entity";
+import NotFoundError from "../../EnterpriseBusiness/errors/NotFoundError";
 
 export class UserRepository implements IUserRepository {
     private users: User[] = [{id: 1, email: 'email', type: UserType.Admin, name: 'name', password: 'password'}];
