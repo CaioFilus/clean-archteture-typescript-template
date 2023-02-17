@@ -33,7 +33,6 @@ export default class ExpressAdapter implements HttpServer {
     }
 
     registerController(controller: HttpController) {
-
         controller.endpoints.forEach(endpoint => {
             // eslint-disable-next-line no-console
             console.log(`Registering endpoint: ${endpoint.method} ${endpoint.url}`);

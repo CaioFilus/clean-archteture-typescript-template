@@ -27,35 +27,40 @@ export interface HttpRequest<Body = unknown, Headers = HttpHeaders, Query =  Htt
 
 export type HttpControllerFunction = (req: HttpRequest<unknown, HttpHeaders, HttpQuery>) => Promise<HttpResult>;
 
+export class HttpController {
+    baseUrl = '';
+
+    endpoints: { url: string, method: HttpMethod, fn: HttpControllerFunction }[] = [];
+}
+
 export interface HttpServer {
     start(): Promise<void>;
     stop(): Promise<void>;
     registerController(controller: HttpController);
 }
 
-export class HttpController {
-    baseUrl = '';
-
-    httpServer: HttpServer;
-
-    endpoints: { url: string, method: HttpMethod, fn: HttpControllerFunction }[] = [];
-}
-
 const FormatMetadataKey = Symbol("format");
 
 export function Route(url) {
-    return (constructor: new (...args: any) => HttpController) => {
-        const endpoints = Reflect.getOwnMetadata(FormatMetadataKey, constructor.prototype);
-        console.log('endpoints', endpoints);
-        // eslint-disable-next-line no-param-reassign
-        constructor.prototype.teste = "asdsada";
-        Object.defineProperty(constructor, 'test5', {value: '213'} )
+    return <T extends { new(...args: any[]): object }>(constructor: T) => {
+        const endpoints: HttpController['endpoints'] = Reflect.getOwnMetadata(FormatMetadataKey, constructor.prototype) || []
+        const normalizedEndpoints = endpoints.map((endpoint) => ({
+            ...endpoint,
+            url: url + endpoint.url,
+        }));
+        return class extends constructor {
+            baseUrl = url;
+
+            endpoints = normalizedEndpoints;
+        };
     }
 }
 
 export function Get(url) {
-    return (target: new (...args: unknown[]) => object, propertyKey: string, descriptor: TypedPropertyDescriptor<HttpControllerFunction>) => {
-        Reflect.defineMetadata(FormatMetadataKey, {url, method: HttpMethod.get, fn: descriptor.value}, target);
+    return (target: HttpController, propertyKey: string, descriptor: TypedPropertyDescriptor<HttpControllerFunction>) => {
+        const endpoints: HttpController['endpoints'] = Reflect.getOwnMetadata(FormatMetadataKey, target) || [];
+        endpoints.push({url, method: HttpMethod.get, fn: descriptor.value});
+        Reflect.defineMetadata(FormatMetadataKey, endpoints, target);
         return descriptor;
     }
 }
@@ -64,24 +69,25 @@ export function Post(url) {
     return (target: HttpController, propertyKey: string, descriptor: TypedPropertyDescriptor<HttpControllerFunction>) => {
         const endpoints: HttpController['endpoints'] = Reflect.getOwnMetadata(FormatMetadataKey, target) || [];
         endpoints.push({url, method: HttpMethod.post, fn: descriptor.value});
-        Reflect.defineMetadata(FormatMetadataKey, endpoints, target)
-        // eslint-disable-next-line no-param-reassign
-        if(!target.endpoints) target.endpoints = [];
-        target.endpoints.push({url, method: HttpMethod.post, fn: descriptor.value})
+        Reflect.defineMetadata(FormatMetadataKey, endpoints, target);
         return descriptor;
     }
 }
 
 export function Put(url) {
     return (target: HttpController, propertyKey: string, descriptor: TypedPropertyDescriptor<HttpControllerFunction>) => {
-        target.endpoints.push({url, method: HttpMethod.put, fn: descriptor.value})
+        const endpoints: HttpController['endpoints'] = Reflect.getOwnMetadata(FormatMetadataKey, target) || [];
+        endpoints.push({url, method: HttpMethod.put, fn: descriptor.value});
+        Reflect.defineMetadata(FormatMetadataKey, endpoints, target);
         return descriptor;
     }
 }
 
 export function Delete(url) {
     return (target: HttpController, propertyKey: string, descriptor: TypedPropertyDescriptor<HttpControllerFunction>) => {
-        target.endpoints.push({url, method: HttpMethod.delete, fn: descriptor.value})
+        const endpoints: HttpController['endpoints'] = Reflect.getOwnMetadata(FormatMetadataKey, target) || [];
+        endpoints.push({url, method: HttpMethod.delete, fn: descriptor.value});
+        Reflect.defineMetadata(FormatMetadataKey, endpoints, target);
         return descriptor;
     }
 }

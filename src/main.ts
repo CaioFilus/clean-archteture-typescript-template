@@ -6,9 +6,7 @@ import webserver from "./Main/factories/webserverFactory";
 
 
 const authHttpController = new AuthHttpController(LoginUseCaseFactory());
-console.log(AuthHttpController.prototype, authHttpController, authHttpController.constructor.prototype);
 
-//
 // console.log(authHttpController);
 webserver.registerController(authHttpController);
 
