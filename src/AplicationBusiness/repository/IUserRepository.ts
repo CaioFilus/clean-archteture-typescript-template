@@ -14,4 +14,5 @@ export default interface IUserRepository {
     createAccounting(user: CreateAccountRepository):Promise <Result<User, DatabaseError>>;
 
     findByEmail(email: string): Promise<Result<User, NotFoundError | DatabaseError>>;
+    findById(id: number): Promise<Result<User, NotFoundError | DatabaseError>>;
 }

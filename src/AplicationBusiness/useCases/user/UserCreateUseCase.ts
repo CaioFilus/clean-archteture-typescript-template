@@ -1,34 +1,26 @@
 import {Err, Ok, Result} from "ts-results";
-import UseCase from "../../../EnterpriseBusiness/useCases/useCase";
-import IUserRepository from "../../repository/IUserRepository";
-import {UserType} from "../../../EnterpriseBusiness/entities/user.entity";
-import DatabaseError from "../../../EnterpriseBusiness/errors/DatabaseError";
+import IAuthService, {Auth} from "@/AplicationBusiness/services/IAuthService";
+import {CreateUserForm, CreateUserResult, IUserCreateUseCase} from "@/EnterpriseBusiness/useCases/user/UserCreateUseCases";
+import {UserType} from "@/EnterpriseBusiness/entities/user.entity";
+import IUserRepository from "@/AplicationBusiness/repository/IUserRepository";
+import DatabaseError from "@/EnterpriseBusiness/errors/DatabaseError";
 import IHashService from "../../services/IHashService";
 import InvalidEmailError from "../../../EnterpriseBusiness/errors/InvalidEmailError";
 import InvalidPasswordError from "../../../EnterpriseBusiness/errors/InvalidPasswordError";
 
-export interface CreateUserForm {
-    name: string
-    type: UserType,
-    email: string
-    password: string
-}
-
-export interface CreateUserResult {
-    id: number,
-    name: string
-    email: string
-}
-
-export class CreateUserUseCase implements UseCase {
-
+@Auth([UserType.Admin])
+export default class UserCreateUseCase implements IUserCreateUseCase {
     userRepository: IUserRepository;
 
     hashService: IHashService;
 
-    constructor(userRepository: IUserRepository, hashService: IHashService) {
+    authManager: IAuthService;
+
+
+    constructor(userRepository: IUserRepository, hashService: IHashService, authManager: IAuthService) {
         this.userRepository = userRepository;
         this.hashService = hashService;
+        this.authManager = authManager;
     }
 
     async execute(form: CreateUserForm): Promise<Result<CreateUserResult, DatabaseError>> {

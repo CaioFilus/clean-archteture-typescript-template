@@ -38,4 +38,9 @@ export class UserRepository implements IUserRepository {
         return Promise.resolve(Err(new NotFoundError('User not found')));
     }
 
+    findById(id: number): Promise<Result<User, NotFoundError | DatabaseError>> {
+        const user = this.users.find((item) => item.id === id);
+        if(!user) return Promise.resolve(Err(new NotFoundError('User not found')));
+        return Promise.resolve(Ok(user));
+    }
 }
