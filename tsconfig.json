@@ -1,14 +1,10 @@
 {
    "compilerOptions": {
-      "lib": [
-         "es5",
-         "es6"
-      ],
+      "lib": ["es5", "es6"],
       "baseUrl": "./src",
-      "rootDir": "./src",
       "paths": {
          "@/*": [
-            "./*"
+            "*"
          ]
       },
       "target": "es5",

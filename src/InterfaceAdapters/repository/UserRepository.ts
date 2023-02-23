@@ -8,6 +8,10 @@ import DatabaseError from "../../EnterpriseBusiness/errors/DatabaseError";
 import User, {UserType} from "../../EnterpriseBusiness/entities/user.entity";
 import NotFoundError from "../../EnterpriseBusiness/errors/NotFoundError";
 
+interface DbAdapter {
+    find(key: string, where: {id: number}): Promise<Result<User, NotFoundError | DatabaseError>>;
+}
+
 export class UserRepository implements IUserRepository {
     private users: User[] = [{id: 1, email: 'email', type: UserType.Admin, name: 'name', password: 'password'}];
 

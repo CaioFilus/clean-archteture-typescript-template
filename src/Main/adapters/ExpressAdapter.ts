@@ -7,9 +7,9 @@ import {
     HttpQuery,
     HttpRequest,
     HttpServer
-} from "../../InterfaceAdapters/adapters/HttpServer";
+} from "@/InterfaceAdapters/adapters/HttpServer";
 
-async function expressEndpointWrap(req: Request, res : Response, fn: HttpControllerFunction){
+async function expressEndpointWrap(req: Request, res : Response, fn: HttpControllerFunction, controller: HttpController) {
     const wrapRes: HttpRequest = {
         url: req.url,
         body: req.body as unknown,
@@ -17,11 +17,15 @@ async function expressEndpointWrap(req: Request, res : Response, fn: HttpControl
         method: req.method as HttpMethod,
         query: req.query as HttpQuery,
     }
-    const result = await fn(wrapRes);
-    if(result.err) {
-        res.send(result.val);
-    } else {
-        res.send(result.val);
+    try {
+        const result = await fn.call(controller, wrapRes);
+        if (result.err) {
+            res.statusCode = 500;
+            res.send(result.val);
+        } else {
+            res.send(result.val);
+        }
+    } catch (e) {
     }
 }
 
@@ -39,41 +43,36 @@ export default class ExpressAdapter implements HttpServer {
             // eslint-disable-next-line default-case
             switch (endpoint.method) {
                 case HttpMethod.get:
-                    this.get(endpoint.url, endpoint.fn);
+                    this.express.get(
+                        endpoint.url,
+                        (req, res) => expressEndpointWrap(req, res, endpoint.fn, controller)
+                    );
                     break;
                 case HttpMethod.post:
-                    this.post(endpoint.url, endpoint.fn);
+                    this.express.post(
+                        endpoint.url,
+                        (req, res) => expressEndpointWrap(req, res, endpoint.fn, controller)
+                    );
                     break;
                 case HttpMethod.put:
-                    this.put(endpoint.url, endpoint.fn);
+                    this.express.put(
+                        endpoint.url,
+                        (req, res) => expressEndpointWrap(req, res, endpoint.fn, controller)
+                    );
                     break;
                 case HttpMethod.delete:
-                    this.delete(endpoint.url, endpoint.fn);
+                    this.express.delete(
+                        endpoint.url,
+                        (req, res) => expressEndpointWrap(req, res, endpoint.fn, controller)
+                    );
                     break;
             }
         });
     }
 
-
-
-    get(url: string, fn: HttpControllerFunction) {
-        this.express.get(url, (req, res) => expressEndpointWrap(req, res, fn));
-    }
-
-    post(url: string, fn: HttpControllerFunction) {
-        this.express.post(url, (req, res) => expressEndpointWrap(req, res, fn));
-    }
-
-    put(url: string, fn: HttpControllerFunction) {
-        this.express.put(url, (req, res) => expressEndpointWrap(req, res, fn));
-    }
-
-    delete(url: string, fn: HttpControllerFunction) {
-        this.express.delete(url, (req, res) => expressEndpointWrap(req, res, fn));
-    }
-
     start(): Promise<void> {
         this.express.listen(3000);
+        console.log(`Http Server Started at Port: 3000`);
         return undefined;
     }
 

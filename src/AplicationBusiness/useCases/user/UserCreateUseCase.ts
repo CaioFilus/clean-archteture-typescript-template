@@ -26,7 +26,7 @@ export default class UserCreateUseCase implements IUserCreateUseCase {
     async execute(form: CreateUserForm): Promise<Result<CreateUserResult, DatabaseError>> {
 
         if(!this.isEmailValid(form.email)) return Err(new InvalidEmailError(form.email));
-        if(form.password.length > 6) return Err(new InvalidPasswordError('less than 6 characters'));
+        if(form.password.length <= 6) return Err(new InvalidPasswordError('less than 6 characters'));
 
         const hashedPassword = this.hashService.sha256(form.password);
 
@@ -34,6 +34,7 @@ export default class UserCreateUseCase implements IUserCreateUseCase {
         if(createUserResult.err) return createUserResult;
 
         const user = createUserResult.unwrap();
+
         return Ok({id: user.id, name: user.name, email: user.email});
     }
 
