@@ -12,7 +12,7 @@ export default class AuthHttpController extends HttpController {
         this.loginUseCase = loginUseCase;
     }
 
-   @Get('/login')
+   @Post('/login')
    async login(req: HttpRequest): Promise<HttpResult> {
        const useCaseResult = await this.loginUseCase.execute(req.body as {email: string, password: string});
        if(useCaseResult.err) return useCaseResult;
