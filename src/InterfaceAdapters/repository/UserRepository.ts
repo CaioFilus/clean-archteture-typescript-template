@@ -15,23 +15,23 @@ interface DbAdapter {
 export class UserRepository implements IUserRepository {
     private users: User[] = [{id: 1, email: 'email', type: UserType.Admin, name: 'name', password: 'password'}];
 
-    createAccounting(user: CreateAccountRepository): Promise<Result<User, DatabaseError>> {
+    createCustomer(user: CreateAccountRepository): Promise<Result<User, DatabaseError>> {
         const lastId = this.users[this.users.length - 1].id + 1;
-        const newUser = {...user, id: lastId, type: UserType.Accounting};
+        const newUser = {...user, id: lastId, type: UserType.Customer};
         this.users.push(newUser);
         return Promise.resolve(Ok(newUser));
     }
 
     createAdmin(user: CreateAdminRepository): Promise<Result<User, DatabaseError>> {
         const lastId = this.users[this.users.length - 1].id + 1;
-        const newUser = {...user, id: lastId, type: UserType.Accounting};
+        const newUser = {...user, id: lastId, type: UserType.Admin};
         this.users.push(newUser);
         return Promise.resolve(Ok(newUser));
     }
 
-    createCooperating(user: CreateCooperatingRepository): Promise<Result<User, DatabaseError>> {
+    createEmployee(user: CreateAdminRepository): Promise<Result<User, DatabaseError>> {
         const lastId = this.users[this.users.length - 1].id + 1;
-        const newUser = {...user, id: lastId, type: UserType.Accounting};
+        const newUser = {...user, id: lastId, type: UserType.Employee};
         this.users.push(newUser);
         return Promise.resolve(Ok(newUser));
     }

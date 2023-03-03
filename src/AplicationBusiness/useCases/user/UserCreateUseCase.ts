@@ -1,34 +1,34 @@
 import {Err, Ok, Result} from "ts-results";
-import IAuthService, {Auth} from "@/AplicationBusiness/services/IAuthService";
-import {CreateUserForm, CreateUserResult, IUserCreateUseCase} from "@/EnterpriseBusiness/useCases/user/UserCreateUseCases";
+import {
+    CreateUserForm,
+    CreateUserResult,
+    IUserCreateUseCase,
+    UserCreateUseCaseMeta
+} from "@/EnterpriseBusiness/useCases/user/UserCreateUseCases";
 import {UserType} from "@/EnterpriseBusiness/entities/user.entity";
 import IUserRepository from "@/AplicationBusiness/repository/IUserRepository";
 import DatabaseError from "@/EnterpriseBusiness/errors/DatabaseError";
+import {Auth} from "@/AplicationBusiness/services/IAuthService";
 import IHashService from "../../services/IHashService";
 import InvalidEmailError from "../../../EnterpriseBusiness/errors/InvalidEmailError";
 import InvalidPasswordError from "../../../EnterpriseBusiness/errors/InvalidPasswordError";
 
-@Auth([UserType.Admin])
+@Auth(UserType.Admin)
 export default class UserCreateUseCase implements IUserCreateUseCase {
     userRepository: IUserRepository;
 
     hashService: IHashService;
 
-    authManager: IAuthService;
-
-
-    constructor(userRepository: IUserRepository, hashService: IHashService, authManager: IAuthService) {
+    constructor(userRepository: IUserRepository, hashService: IHashService) {
         this.userRepository = userRepository;
         this.hashService = hashService;
-        this.authManager = authManager;
     }
 
-    async execute(form: CreateUserForm): Promise<Result<CreateUserResult, DatabaseError>> {
-
+    async execute(form: CreateUserForm, context: UserCreateUseCaseMeta): Promise<Result<CreateUserResult, DatabaseError>> {
         if(!this.isEmailValid(form.email)) return Err(new InvalidEmailError(form.email));
         if(form.password.length <= 6) return Err(new InvalidPasswordError('less than 6 characters'));
 
-        const hashedPassword = this.hashService.sha256(form.password);
+        const hashedPassword = this.hashService.hashUserPassword(form.password);
 
         const createUserResult = await this.createUser({...form, password: hashedPassword});
         if(createUserResult.err) return createUserResult;
@@ -47,9 +47,9 @@ export default class UserCreateUseCase implements IUserCreateUseCase {
     private async createUser(request: CreateUserForm) {
         if(request.type === UserType.Admin) {
             return this.userRepository.createAdmin(request);
-        } if(request.type === UserType.Accounting) {
-            return this.userRepository.createAccounting(request);
+        } if(request.type === UserType.Customer) {
+            return this.userRepository.createCustomer(request);
         }
-        return this.userRepository.createCooperating(request)
+        return this.userRepository.createEmployee(request);
     }
 }

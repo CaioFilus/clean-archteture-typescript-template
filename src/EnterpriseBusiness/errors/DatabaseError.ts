@@ -5,6 +5,6 @@ export default class DatabaseError extends Error implements TagError {
     tag = 'DatabaseError';
 
     constructor(message?: string) {
-        super(`Database Error:${  message}`);
+        super(`Database Error:${message}`);
     }
 }

@@ -2,12 +2,13 @@ import {Express, Request, Response} from "express";
 import {
     HttpController,
     HttpControllerFunction,
-    HttpHeaders,
-    HttpMethod,
-    HttpQuery,
-    HttpRequest,
-    HttpServer
-} from "@/InterfaceAdapters/adapters/HttpServer";
+    HttpHeaders, HttpMethod, HttpQuery,
+    HttpRequest
+} from "@/InterfaceAdapters/controllers/http/HttpController";
+import {HttpServer} from "@/InterfaceAdapters/adapters/HttpServer";
+import {Result} from "ts-results";
+import TagError from "@/EnterpriseBusiness/errors/TagError";
+
 
 async function expressEndpointWrap(req: Request, res : Response, fn: HttpControllerFunction, controller: HttpController) {
     const wrapRes: HttpRequest = {
@@ -18,14 +19,19 @@ async function expressEndpointWrap(req: Request, res : Response, fn: HttpControl
         query: req.query as HttpQuery,
     }
     try {
-        const result = await fn.call(controller, wrapRes);
+        const result: Result<unknown, TagError> = await fn.call(controller, wrapRes);
         if (result.err) {
+            console.log(result.val);
             res.statusCode = 500;
-            res.send(result.val);
+            res.send({type: result.val.tag, message: result.val.message});
         } else {
+            res.statusCode = 500;
             res.send(result.val);
         }
     } catch (e) {
+        console.log(e);
+        res.statusCode = 500;
+        res.send(e);
     }
 }
 

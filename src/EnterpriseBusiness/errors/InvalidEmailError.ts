@@ -5,6 +5,6 @@ export default class InvalidEmailError extends Error implements TagError {
     tag = 'InvalidEmailError';
 
     constructor(email: string) {
-        super(`Invalid Email :${ email}`);
+        super(`Invalid Email: ${ email}`);
     }
 }

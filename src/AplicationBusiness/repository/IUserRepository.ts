@@ -10,8 +10,8 @@ export type CreateAccountRepository = Omit<CreateUserRepository, 'type'>
 
 export default interface IUserRepository {
     createAdmin(user: CreateAdminRepository): Promise<Result<User, DatabaseError>>;
-    createCooperating(user: CreateCooperatingRepository): Promise<Result<User, DatabaseError>>;
-    createAccounting(user: CreateAccountRepository):Promise <Result<User, DatabaseError>>;
+    createCustomer(user: CreateCooperatingRepository): Promise<Result<User, DatabaseError>>;
+    createEmployee(user: CreateAccountRepository):Promise <Result<User, DatabaseError>>;
 
     findByEmail(email: string): Promise<Result<User, NotFoundError | DatabaseError>>;
     findById(id: number): Promise<Result<User, NotFoundError | DatabaseError>>;

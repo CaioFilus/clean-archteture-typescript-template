@@ -1,12 +1,19 @@
 import IHashService from "../../AplicationBusiness/services/IHashService";
 
+export interface IHashAdapter {
+    compare256(text: string, hashedText: string): boolean;
+    sha256(text: string): string;
+}
+
 export default class HashService implements IHashService {
-    compareSha256(text: string, hashedText: string): boolean {
-        return text === hashedText
+    constructor(readonly hashAdapter: IHashAdapter) {
     }
 
-    sha256(text: string): string {
-        return "123";
+    hashUserPassword(text: string): string {
+        return this.hashAdapter.sha256(text);
     }
 
+    compareUserPassword(text: string, hashedText: string): boolean {
+        return this.hashAdapter.compare256(text, hashedText);
+    }
 }

@@ -1,31 +1,34 @@
-import NotFoundError from "@/EnterpriseBusiness/errors/NotFoundError";
 import {Result} from "ts-results";
-import TokenExpiredError from "@/EnterpriseBusiness/errors/token/TokenExpiredError";
-import TokenInvalidError from "@/EnterpriseBusiness/errors/token/TokenInvalidError";
-import User, {UserType} from "../../EnterpriseBusiness/entities/user.entity";
+import DatabaseError from "@/EnterpriseBusiness/errors/DatabaseError";
+import NotFoundError from "@/EnterpriseBusiness/errors/NotFoundError";
+import UnauthorizedError from "@/EnterpriseBusiness/errors/UnauthorizedError";
+import ForbiddenError from "@/EnterpriseBusiness/errors/ForbiddenError";
+import AuthContext from "@/EnterpriseBusiness/contexts/AuthContext";
+import {UserType} from "@/EnterpriseBusiness/entities/user.entity";
 import UseCase from "../../EnterpriseBusiness/useCases/useCase";
 
-export default interface IAuthService {
-    token: string,
-    resolveToken(): Promise<Result<User, NotFoundError | TokenExpiredError | TokenInvalidError>>;
-    getUser(): User | null;
-    hasAuthorization(role: UserType | UserType[]): boolean;
+interface AuthMeta {
+    auth: AuthContext;
 }
 
-export interface UseAuthManager {
-    authManager: IAuthService
-}
+type AuthErrors = UnauthorizedError | ForbiddenError;
+
+type AuthUseCase<Form = unknown, Res = unknown, Errors extends AuthErrors = AuthErrors> = UseCase<Form, Res, Errors, AuthMeta>
 
 export function Auth(roles?: UserType | UserType[]) {
-    return <P extends UseCase, C extends { new(...args: unknown[]): (P & UseAuthManager)}, >(constructor: C) => {
+    return <P extends AuthUseCase, C extends { new(...args: unknown[]): P}, >(constructor: C) => {
 
-        const prototype = (constructor.prototype) as UseCase;
+        const prototype = (constructor.prototype) as P;
         const wrapFn = prototype.execute;
 
-        prototype.execute = async function (...args: Parameters<P['execute']>) {
-            const user = await this.authManager.getUser();
-            if (!user) throw new Error('Unauthorized');
-            if (roles && !this.authManager.hasAuthorization(roles)) throw new Error('Unauthorized');
+        prototype.execute = async function executeWrap (args: Parameters<P['execute']>[0], context: AuthMeta) {
+            const {auth} = context;
+            const userResult = await auth.getUser();
+            if(userResult.err) return userResult;
+            if(roles) {
+                const hasAuthorizationResult = await auth.hasAuthorization(roles);
+                if(hasAuthorizationResult.err) return hasAuthorizationResult;
+            }
             return wrapFn.call(this, args);
         }
     }

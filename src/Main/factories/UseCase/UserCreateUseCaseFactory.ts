@@ -1,14 +1,10 @@
-import JwtAdapter from "@/Main/adapters/JwtAdapter";
 import {UserRepository} from "@/InterfaceAdapters/repository/UserRepository";
-import {LoginUseCase} from "@/AplicationBusiness/useCases/auth/LoginUserUseCase";
 import HashService from "@/InterfaceAdapters/services/HashService";
-import TokenService from "@/InterfaceAdapters/services/TokenService";
 import UserCreateUseCase from "@/AplicationBusiness/useCases/user/UserCreateUseCase";
+import BcryptAdapter from "@/Main/adapters/BcryptAdapter";
 
 export default function UserCreateUseCaseFactory(){
-    const hashService = new HashService();
-    const tokenService = new TokenService(new JwtAdapter());
+    const hashService = new HashService(new BcryptAdapter());
     const userRepository = new UserRepository();
-    AuthManager
-    return new UserCreateUseCase(userRepository);
+    return new UserCreateUseCase(userRepository, hashService);
 }

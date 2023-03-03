@@ -1,3 +1,4 @@
+import AuthContext from "@/EnterpriseBusiness/contexts/AuthContext";
 import UseCase from "../useCase";
 import DatabaseError from "../../errors/DatabaseError";
 import LoginInvalidError from "../../errors/LoginInvalidError";
@@ -19,4 +20,8 @@ export interface CreateUserResult {
 
 export type UserCreateUseCaseErrors = DatabaseError | LoginInvalidError;
 
-export type IUserCreateUseCase = UseCase<CreateUserForm, CreateUserResult, UserCreateUseCaseErrors>;
+export type UserCreateUseCaseMeta = {
+    auth: AuthContext,
+};
+
+export type IUserCreateUseCase = UseCase<CreateUserForm, CreateUserResult, UserCreateUseCaseErrors, UserCreateUseCaseMeta>;

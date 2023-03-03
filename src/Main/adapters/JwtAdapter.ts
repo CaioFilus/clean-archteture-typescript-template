@@ -12,9 +12,9 @@ export default class JwtAdapter implements ITokenAdapter {
 
     resolveJwt<T>(token: string): Result<T, TokenExpiredError | TokenInvalidError> {
         try {
-            const decoded = jwt.decode(token);
+            const decoded = jwt.verify(token, 'secret');
             return Ok(decoded as T);
-        }catch (e) {
+        } catch (e) {
             if(e instanceof jwt.TokenExpiredError) return Err(new TokenExpiredError(token));
             if(e instanceof jwt.JsonWebTokenError) return Err(new TokenInvalidError(token));
             return Err(new TokenInvalidError(token));

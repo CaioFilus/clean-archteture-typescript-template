@@ -17,4 +17,4 @@ export interface LoginUserResult {
 
 export type LoginUseCaseErrors = DatabaseError | LoginInvalidError;
 
-export type ILoginUseCase = UseCase<LoginUserForm, LoginUserResult, LoginUseCaseErrors>;
+export type ILoginUseCase = UseCase<LoginUserForm, LoginUserResult, LoginUseCaseErrors, undefined>;

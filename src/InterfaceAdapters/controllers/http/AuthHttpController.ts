@@ -1,6 +1,7 @@
 import {Ok} from "ts-results";
 import {ILoginUseCase} from "@/EnterpriseBusiness/useCases/auth/LoginUseCases";
-import {Get, HttpController, HttpRequest, HttpResult, Post, Route} from "../../adapters/HttpServer";
+import {HttpController, HttpRequest, HttpResult} from "@/InterfaceAdapters/controllers/http/HttpController";
+import {Post, Route} from "@/InterfaceAdapters/adapters/HttpServer";
 
 @Route("/api/auth")
 export default class AuthHttpController extends HttpController {
@@ -8,7 +9,6 @@ export default class AuthHttpController extends HttpController {
 
     constructor(loginUseCase: ILoginUseCase){
         super();
-        console.log('aqui', loginUseCase);
         this.loginUseCase = loginUseCase;
     }
 

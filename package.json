@@ -17,6 +17,7 @@
    "dependencies": {
       "@prisma/client": "^4.10.1",
       "@types/mysql": "^2.15.21",
+      "bcrypt": "^5.1.0",
       "body-parser": "^1.19.1",
       "dotenv": "^16.0.1",
       "express": "^4.17.2",

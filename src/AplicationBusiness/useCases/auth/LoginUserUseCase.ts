@@ -1,5 +1,10 @@
-import {Err, Ok} from "ts-results";
-import {ILoginUseCase} from "@/EnterpriseBusiness/useCases/auth/LoginUseCases";
+import {Err, Ok, Result} from "ts-results";
+import {
+    ILoginUseCase,
+    LoginUseCaseErrors,
+    LoginUserForm,
+    LoginUserResult
+} from "@/EnterpriseBusiness/useCases/auth/LoginUseCases";
 import IUserRepository from "../../repository/IUserRepository";
 import IHashService from "../../services/IHashService";
 import NotFoundError from "../../../EnterpriseBusiness/errors/NotFoundError";
@@ -24,7 +29,7 @@ export class LoginUseCase implements ILoginUseCase {
         this.tokenService = tokenService;
     }
 
-    async execute(form) {
+    async execute(form: LoginUserForm): Promise<Result<LoginUserResult, LoginUseCaseErrors>> {
         const findUserRes = await this.userRepository.findByEmail(form.email);
 
         if (findUserRes.err) {
@@ -34,7 +39,7 @@ export class LoginUseCase implements ILoginUseCase {
 
         const user = findUserRes.unwrap();
 
-        if(!this.hashService.compareSha256(form.password, user.password)) return Err(new LoginInvalidError());
+        if(!this.hashService.compareUserPassword(form.password, user.password)) return Err(new LoginInvalidError());
 
         const token = this.tokenService.generateLoginToken(user);
 
