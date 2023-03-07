@@ -38,7 +38,6 @@ export class LoginUseCase implements ILoginUseCase {
         }
 
         const user = findUserRes.unwrap();
-
         if(!this.hashService.compareUserPassword(form.password, user.password)) return Err(new LoginInvalidError());
 
         const token = this.tokenService.generateLoginToken(user);

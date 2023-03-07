@@ -1,5 +1,5 @@
 import {IHashAdapter} from "@/InterfaceAdapters/services/HashService";
-import {bcrypt} from "bcrypt";
+import bcrypt from "bcrypt";
 
 
 export default class BcryptAdapter implements IHashAdapter {

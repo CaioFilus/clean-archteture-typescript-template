@@ -15,4 +15,5 @@ export default interface IUserRepository {
 
     findByEmail(email: string): Promise<Result<User, NotFoundError | DatabaseError>>;
     findById(id: number): Promise<Result<User, NotFoundError | DatabaseError>>;
+    findAll(query: {id?: number}): Promise<Result<User[], DatabaseError>>;
 }

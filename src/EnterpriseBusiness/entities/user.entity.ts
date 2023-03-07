@@ -1,8 +1,8 @@
 
 export enum UserType {
-    Admin = 'admin',
-    Employee = 'employee',
-    Customer = 'customer',
+    Admin = 'Admin',
+    Employee = 'Employee',
+    Customer = 'Customer',
 }
 
 export default interface User {

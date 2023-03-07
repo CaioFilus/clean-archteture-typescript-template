@@ -3,6 +3,7 @@ import UseCase from "../useCase";
 import DatabaseError from "../../errors/DatabaseError";
 import LoginInvalidError from "../../errors/LoginInvalidError";
 import {UserType} from "../../entities/user.entity";
+import UserAlreadyInSystem from "@/EnterpriseBusiness/errors/UserAlreadyInSystem";
 
 
 export interface CreateUserForm {
@@ -18,7 +19,7 @@ export interface CreateUserResult {
     email: string
 }
 
-export type UserCreateUseCaseErrors = DatabaseError | LoginInvalidError;
+export type UserCreateUseCaseErrors = DatabaseError | LoginInvalidError | UserAlreadyInSystem;
 
 export type UserCreateUseCaseMeta = {
     auth: AuthContext,
