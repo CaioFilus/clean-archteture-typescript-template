@@ -39,7 +39,7 @@ export class UserRepository implements IUserRepository {
                 type: userModelTypeMapper[res.type],
             });
         } catch (e) {
-            return Err(new DatabaseError(e.message));
+            return Err(new DatabaseError((e as Error).message));
         }
     }
 
@@ -54,7 +54,7 @@ export class UserRepository implements IUserRepository {
                 type: userModelTypeMapper[res.type],
             });
         } catch (e) {
-            return Err(new DatabaseError(e.message));
+            return Err(new DatabaseError((e as Error).message));
         }
     }
 
@@ -69,7 +69,7 @@ export class UserRepository implements IUserRepository {
                 type: userModelTypeMapper[res.type],
             });
         } catch (e) {
-            return Err(new DatabaseError(e.message));
+            return Err(new DatabaseError((e as Error).message));
         }
     }
 
@@ -85,7 +85,7 @@ export class UserRepository implements IUserRepository {
                 type: userModelTypeMapper[res.type],
             });
         } catch (e) {
-            return Err(new DatabaseError(e.message));
+            return Err(new DatabaseError((e as Error).message));
         }
     }
 
@@ -101,7 +101,7 @@ export class UserRepository implements IUserRepository {
                 type: userModelTypeMapper[res.type],
             });
         } catch (e) {
-            return Err(new DatabaseError(e.message));
+            return Err(new DatabaseError((e as Error).message));
         }
     }
 
@@ -119,7 +119,7 @@ export class UserRepository implements IUserRepository {
                 type: userModelTypeMapper[user.type],
             })));
         } catch (e) {
-            return Err(new DatabaseError(e.message));
+            return Err(new DatabaseError((e as Error).message));
         }
     }
 

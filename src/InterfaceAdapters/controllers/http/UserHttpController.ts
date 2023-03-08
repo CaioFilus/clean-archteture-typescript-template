@@ -10,7 +10,7 @@ export default class UserHttpController extends HttpController {
 
     constructor(
         readonly authContextProvider: IAuthProvider<string>,
-        readonly createUserUseCase: IUserCreateUseCase,
+        readonly userCreateUseCase: IUserCreateUseCase,
         readonly userListUseCase: IUserListUseCase,
 
     ) {
@@ -18,10 +18,10 @@ export default class UserHttpController extends HttpController {
     }
 
     @Post('/')
-    async create(req: HttpRequest<CreateUserForm>): Promise<HttpResult> {
-
+    async create(req: HttpRequest): Promise<HttpResult> {
+        const body = req.body as CreateUserForm;
         const authContext = this.authContextProvider.createAuthContext(req.headers.authorization);
-        const useCaseResult = await this.createUserUseCase.execute(req.body, { auth: authContext });
+        const useCaseResult = await this.userCreateUseCase.execute(body , { auth: authContext });
         if(useCaseResult.err) {
             const error = useCaseResult.val;
             return useCaseResult;
@@ -35,7 +35,7 @@ export default class UserHttpController extends HttpController {
     }
 
     @Get('/')
-    async list(req: HttpRequest<CreateUserForm>): Promise<HttpResult> {
+    async list(req: HttpRequest): Promise<HttpResult> {
         const authContext = this.authContextProvider.createAuthContext(req.headers.authorization);
         const useCaseResult = await this.userListUseCase.execute(req.body as {id?: number}, { auth: authContext });
         if(useCaseResult.err) return useCaseResult;

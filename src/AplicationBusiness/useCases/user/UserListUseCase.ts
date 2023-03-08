@@ -1,6 +1,6 @@
 import {Err, Ok, Result} from "ts-results";
 import IUserRepository from "@/AplicationBusiness/repository/IUserRepository";
-import {Auth} from "@/AplicationBusiness/services/IAuthService";
+import {Auth} from "@/AplicationBusiness/decorators/Auth";
 import {
     IUserListUseCase,
     ListUserForm,

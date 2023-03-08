@@ -5,7 +5,6 @@ export type HttpOk = string | null | object;
 export type HttpResult = Result<HttpOk, Error>;
 
 export type HttpHeaders = {
-    token?: string,
     [key: string]: string
 };
 export type HttpQuery = {[key: string]: string | undefined | HttpQuery | HttpQuery[]};

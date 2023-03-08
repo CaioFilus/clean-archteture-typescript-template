@@ -1,6 +1,3 @@
-import {Result} from "ts-results";
-import DatabaseError from "@/EnterpriseBusiness/errors/DatabaseError";
-import NotFoundError from "@/EnterpriseBusiness/errors/NotFoundError";
 import UnauthorizedError from "@/EnterpriseBusiness/errors/UnauthorizedError";
 import ForbiddenError from "@/EnterpriseBusiness/errors/ForbiddenError";
 import AuthContext from "@/EnterpriseBusiness/contexts/AuthContext";
@@ -15,13 +12,15 @@ type AuthErrors = UnauthorizedError | ForbiddenError;
 
 type AuthUseCase<Form = unknown, Res = unknown, Errors extends AuthErrors = AuthErrors> = UseCase<Form, Res, Errors, AuthMeta>
 
-export function Auth(roles?: UserType | UserType[]) {
-    return <P extends AuthUseCase, C extends { new(...args: unknown[]): P}, >(constructor: C) => {
+export function Auth<Func extends (form: any, context: any, ...args: any) => any>(roles?: UserType | UserType[]) {
+    return (target: UseCase, propertyKey: string, descriptor: TypedPropertyDescriptor<Func>) => {
+        if(!descriptor.value) return;
+        const wrapFn = descriptor.value;
 
-        const prototype = (constructor.prototype) as P;
-        const wrapFn = prototype.execute;
-
-        prototype.execute = async function executeWrap (args: Parameters<P['execute']>[0], context: AuthMeta) {
+        // eslint-disable-next-line no-param-reassign,@typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        // eslint-disable-next-line no-param-reassign
+        descriptor.value = async function executeWrap (form: Parameters<Func>[0], context: AuthMeta, ...args: any) {
             const {auth} = context;
             const userResult = await auth.getUser();
             if(userResult.err) return userResult;
@@ -29,7 +28,7 @@ export function Auth(roles?: UserType | UserType[]) {
                 const hasAuthorizationResult = await auth.hasAuthorization(roles);
                 if(hasAuthorizationResult.err) return hasAuthorizationResult;
             }
-            return wrapFn.call(this, args);
+            return wrapFn.call(this, form, context, ...args);
         }
     }
 }

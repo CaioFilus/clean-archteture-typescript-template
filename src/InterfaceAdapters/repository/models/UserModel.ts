@@ -10,17 +10,17 @@ export enum UserModelRole {
 export default class UserModel {
 
     @PrimaryGeneratedColumn({name: "MYPAGE_USER_ID"})
-    id: number;
+    id!: number;
 
     @Column({name: "MYPAGE_USER_ADDRESS"})
-    name: string;
+    name!: string;
 
     @Column({})
-    email: string;
+    email!: string;
 
     @Column({})
-    password: string;
+    password!: string;
 
     @Column("text")
-    type: UserModelRole;
+    type!: UserModelRole;
 }

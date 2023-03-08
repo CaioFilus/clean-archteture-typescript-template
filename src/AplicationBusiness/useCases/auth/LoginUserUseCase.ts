@@ -5,6 +5,8 @@ import {
     LoginUserForm,
     LoginUserResult
 } from "@/EnterpriseBusiness/useCases/auth/LoginUseCases";
+import validators from "@/AplicationBusiness/validators/Validators";
+import ValidateForm from "@/AplicationBusiness/decorators/ValidateForm";
 import IUserRepository from "../../repository/IUserRepository";
 import IHashService from "../../services/IHashService";
 import NotFoundError from "../../../EnterpriseBusiness/errors/NotFoundError";
@@ -13,25 +15,19 @@ import ITokenService from "../../services/ITokenService";
 
 export class LoginUseCase implements ILoginUseCase {
 
-    userRepository: IUserRepository;
-
-    hashService: IHashService;
-
-    tokenService: ITokenService;
-
     constructor(
-        userRepository: IUserRepository,
-        hashService: IHashService,
-        tokenService: ITokenService) {
-
-        this.userRepository = userRepository;
-        this.hashService = hashService;
-        this.tokenService = tokenService;
+        readonly userRepository: IUserRepository,
+        readonly hashService: IHashService,
+        readonly tokenService: ITokenService) {
     }
 
+    @ValidateForm({
+        email: validators.email(),
+        password: validators.password(),
+    })
     async execute(form: LoginUserForm): Promise<Result<LoginUserResult, LoginUseCaseErrors>> {
-        const findUserRes = await this.userRepository.findByEmail(form.email);
 
+        const findUserRes = await this.userRepository.findByEmail(form.email);
         if (findUserRes.err) {
             if(findUserRes.val instanceof NotFoundError) return Err(new LoginInvalidError());
             return findUserRes;
