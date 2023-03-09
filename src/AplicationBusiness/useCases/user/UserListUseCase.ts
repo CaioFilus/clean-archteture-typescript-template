@@ -4,10 +4,10 @@ import {Auth} from "@/AplicationBusiness/decorators/Auth";
 import {
     IUserListUseCase,
     ListUserForm,
-    ListUserResult, UserListUseCaseErrors,
+    ListUserResult, UserListUseCaseErrors, UserListUseCaseContext,
 } from "@/EnterpriseBusiness/useCases/user/UserListUseCases";
 
-@Auth()
+
 export default class UserListUseCase implements IUserListUseCase {
     userRepository: IUserRepository;
 
@@ -15,7 +15,8 @@ export default class UserListUseCase implements IUserListUseCase {
         this.userRepository = userRepository;
     }
 
-    async execute(request: ListUserForm): Promise<Result<ListUserResult, UserListUseCaseErrors>> {
+    @Auth()
+    async execute(request: ListUserForm, context: UserListUseCaseContext): Promise<Result<ListUserResult, UserListUseCaseErrors>> {
         const findAllUsersRes = await this.userRepository.findAll({id: request.id})
         if(findAllUsersRes.err) return findAllUsersRes as Err<UserListUseCaseErrors>;
 

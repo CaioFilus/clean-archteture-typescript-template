@@ -1,6 +1,7 @@
 import UseCase from "../useCase";
 import DatabaseError from "../../errors/DatabaseError";
 import LoginInvalidError from "../../errors/LoginInvalidError";
+import FormError from "@/EnterpriseBusiness/errors/form/FormError";
 
 
 export interface LoginUserForm {
@@ -15,6 +16,6 @@ export interface LoginUserResult {
     token: string
 }
 
-export type LoginUseCaseErrors = DatabaseError | LoginInvalidError;
+export type LoginUseCaseErrors = DatabaseError | FormError | LoginInvalidError;
 
 export type ILoginUseCase = UseCase<LoginUserForm, LoginUserResult, LoginUseCaseErrors, undefined>;

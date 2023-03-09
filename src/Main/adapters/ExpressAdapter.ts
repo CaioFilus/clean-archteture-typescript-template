@@ -7,7 +7,7 @@ import {
 } from "@/InterfaceAdapters/controllers/http/HttpController";
 import {HttpServer} from "@/InterfaceAdapters/adapters/HttpServer";
 import {Result} from "ts-results";
-import TagError from "@/EnterpriseBusiness/errors/TagError";
+import UnknownError from "@/EnterpriseBusiness/errors/UnknownError";
 
 
 async function expressEndpointWrap(req: Request, res : Response, fn: HttpControllerFunction, controller: HttpController) {
@@ -19,19 +19,23 @@ async function expressEndpointWrap(req: Request, res : Response, fn: HttpControl
         query: req.query as HttpQuery,
     }
     try {
-        const result: Result<unknown, TagError> = await fn.call(controller, wrapRes);
+        const result = await fn.call(controller, wrapRes);
         if (result.err) {
-            console.log(result.val);
             res.statusCode = 500;
-            res.send({type: result.val.tag, message: result.val.message});
+            res.send({type: result.val.tag, message: result.val.message, data: result.val.data});
         } else {
             res.statusCode = 500;
             res.send(result.val);
         }
     } catch (e) {
-        console.log(e);
         res.statusCode = 500;
-        res.send(e);
+        if(e instanceof Error) {
+            const error = new UnknownError(e.message);
+            res.send({type: error.tag, message: error.message, data: error.data});
+        } else {
+            const error = new UnknownError(String(e));
+            res.send({type: error.tag, message: error.message, data: error.data});
+        }
     }
 }
 
@@ -79,10 +83,10 @@ export default class ExpressAdapter implements HttpServer {
     start(): Promise<void> {
         this.express.listen(3000);
         console.log(`Http Server Started at Port: 3000`);
-        return undefined;
+        return Promise.resolve()
     }
 
     stop(): Promise<void> {
-        return undefined;
+        return Promise.resolve()
     }
 }

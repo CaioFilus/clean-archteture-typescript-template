@@ -10,10 +10,10 @@ interface AuthMeta {
 
 type AuthErrors = UnauthorizedError | ForbiddenError;
 
-type AuthUseCase<Form = unknown, Res = unknown, Errors extends AuthErrors = AuthErrors> = UseCase<Form, Res, Errors, AuthMeta>
+type AuthUseCase<Form = any, Res = any, Errors extends AuthErrors = AuthErrors> = UseCase<Form, Res, Errors, AuthMeta>
 
-export function Auth<Func extends (form: any, context: any, ...args: any) => any>(roles?: UserType | UserType[]) {
-    return (target: UseCase, propertyKey: string, descriptor: TypedPropertyDescriptor<Func>) => {
+export function Auth<Func extends AuthUseCase['execute']>(roles?: UserType | UserType[]) {
+    return (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<Func>) => {
         if(!descriptor.value) return;
         const wrapFn = descriptor.value;
 
@@ -28,7 +28,7 @@ export function Auth<Func extends (form: any, context: any, ...args: any) => any
                 const hasAuthorizationResult = await auth.hasAuthorization(roles);
                 if(hasAuthorizationResult.err) return hasAuthorizationResult;
             }
-            return wrapFn.call(this, form, context, ...args);
+            return wrapFn.call(this, form, context);
         }
     }
 }

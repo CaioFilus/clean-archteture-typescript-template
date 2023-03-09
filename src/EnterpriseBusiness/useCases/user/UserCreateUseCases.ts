@@ -21,8 +21,8 @@ export interface CreateUserResult {
 
 export type UserCreateUseCaseErrors = DatabaseError | LoginInvalidError | UserAlreadyInSystem;
 
-export type UserCreateUseCaseMeta = {
+export type UserCreateUseCaseContext = {
     auth: AuthContext,
 };
 
-export type IUserCreateUseCase = UseCase<CreateUserForm, CreateUserResult, UserCreateUseCaseErrors, UserCreateUseCaseMeta>;
+export type IUserCreateUseCase = UseCase<CreateUserForm, CreateUserResult, UserCreateUseCaseErrors, UserCreateUseCaseContext>;

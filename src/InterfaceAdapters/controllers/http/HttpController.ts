@@ -1,8 +1,9 @@
 import {Result} from "ts-results";
+import TagError from "@/EnterpriseBusiness/errors/TagError";
 
 export type HttpOk = string | null | object;
 
-export type HttpResult = Result<HttpOk, Error>;
+export type HttpResult = Result<HttpOk, TagError>;
 
 export type HttpHeaders = {
     [key: string]: string

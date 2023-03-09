@@ -1,6 +1,6 @@
 import TagError from "./TagError";
 
-export default class DatabaseError extends Error implements TagError {
+export default class DatabaseError extends TagError {
 
     tag = 'DatabaseError';
 

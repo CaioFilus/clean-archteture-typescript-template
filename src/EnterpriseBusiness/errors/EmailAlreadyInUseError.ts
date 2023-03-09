@@ -1,6 +1,6 @@
 import TagError from "./TagError";
 
-export default class EmailAlreadyInUseError extends Error implements TagError {
+export default class EmailAlreadyInUseError extends TagError {
 
     tag = 'EmailAlreadyInUseError';
 

@@ -1,6 +1,6 @@
 import TagError from "../TagError";
 
-export default class TokenInvalidError extends Error implements TagError {
+export default class TokenInvalidError extends TagError {
 
     tag = 'TokenInvalidError';
 

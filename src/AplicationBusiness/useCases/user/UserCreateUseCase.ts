@@ -2,7 +2,7 @@ import {Err, Ok, Result} from "ts-results";
 import {
     CreateUserForm,
     CreateUserResult,
-    IUserCreateUseCase, UserCreateUseCaseErrors, UserCreateUseCaseMeta,
+    IUserCreateUseCase, UserCreateUseCaseErrors, UserCreateUseCaseContext,
 } from "@/EnterpriseBusiness/useCases/user/UserCreateUseCases";
 import {UserType} from "@/EnterpriseBusiness/entities/user.entity";
 import IUserRepository from "@/AplicationBusiness/repository/IUserRepository";
@@ -25,7 +25,7 @@ export default class UserCreateUseCase implements IUserCreateUseCase {
     }
 
     @Auth(UserType.Admin)
-    async execute(form: CreateUserForm, context: UserCreateUseCaseMeta): Promise<Result<CreateUserResult, UserCreateUseCaseErrors>> {
+    async execute(form: CreateUserForm, context: UserCreateUseCaseContext): Promise<Result<CreateUserResult, UserCreateUseCaseErrors>> {
 
         const verifyIfEmailIsUsedResult = await this.verifyIfEmailIsUsed(form.email);
         if(verifyIfEmailIsUsedResult.err) return verifyIfEmailIsUsedResult;

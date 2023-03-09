@@ -12,8 +12,8 @@ export type ListUserResult = Omit<User, 'password'>[];
 
 export type UserListUseCaseErrors = DatabaseError;
 
-export type UserListUseCaseMeta = {
+export type UserListUseCaseContext = {
     auth: AuthContext,
 };
 
-export type IUserListUseCase = UseCase<ListUserForm, ListUserResult, UserListUseCaseErrors, UserListUseCaseMeta>;
+export type IUserListUseCase = UseCase<ListUserForm, ListUserResult, UserListUseCaseErrors, UserListUseCaseContext>;

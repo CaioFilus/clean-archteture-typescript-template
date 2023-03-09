@@ -1,6 +1,6 @@
 import TagError from "./TagError";
 
-export default class InvalidPasswordError extends Error implements TagError {
+export default class InvalidPasswordError extends TagError {
 
     tag = 'InvalidPasswordError';
 

@@ -23,7 +23,7 @@ export class LoginUseCase implements ILoginUseCase {
 
     @ValidateForm({
         email: validators.email(),
-        password: validators.password(),
+        password: validators.password()
     })
     async execute(form: LoginUserForm): Promise<Result<LoginUserResult, LoginUseCaseErrors>> {
 

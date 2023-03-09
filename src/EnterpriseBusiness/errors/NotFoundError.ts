@@ -1,6 +1,6 @@
 import TagError from "./TagError";
 
-export default class NotFoundError extends Error implements TagError {
+export default class NotFoundError extends TagError {
 
     tag = 'NotFoundError';
 

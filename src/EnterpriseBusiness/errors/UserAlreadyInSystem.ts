@@ -1,6 +1,6 @@
 import TagError from "./TagError";
 
-export default class UserAlreadyInSystem extends Error implements TagError {
+export default class UserAlreadyInSystem extends TagError {
 
     tag = 'UserAlreadyInSystem';
 

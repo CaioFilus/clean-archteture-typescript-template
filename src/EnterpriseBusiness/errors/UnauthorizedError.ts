@@ -1,6 +1,6 @@
 import TagError from "./TagError";
 
-export default class UnauthorizedError extends Error implements TagError {
+export default class UnauthorizedError extends TagError {
 
     tag = 'UnauthorizedError';
 
