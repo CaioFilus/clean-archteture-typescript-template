@@ -33,7 +33,6 @@ export default function ValidateForm<Func extends (form: any, ...args: any[]) =>
                     }
                     return acc;
                 }, {});
-                console.log(1111111111, errors, formatted);
                 return Err(new FormError(errors));
             }
             return originalMethod.call(this, form, ...args);
