@@ -13,6 +13,7 @@ export default {
         if (opts.max) validator.max(opts.max);
         return validator;
     },
+    enum: <T>(values: [ T, ...(T)[]]) => z.enum(['2']),
     email: () => z.string().email(),
     password: () => z.string().min(6),
 }

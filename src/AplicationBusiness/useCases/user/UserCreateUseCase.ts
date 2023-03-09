@@ -25,6 +25,12 @@ export default class UserCreateUseCase implements IUserCreateUseCase {
     }
 
     @Auth(UserType.Admin)
+    @ValidateForm({
+        name: validators.string({minLength: 3}),
+        email: validators.email(),
+        type: validators.enum<UserType>([UserType.Admin, UserType.Customer, UserType.Employee]),
+        password: validators.password(),
+    })
     async execute(form: CreateUserForm, context: UserCreateUseCaseContext): Promise<Result<CreateUserResult, UserCreateUseCaseErrors>> {
 
         const verifyIfEmailIsUsedResult = await this.verifyIfEmailIsUsed(form.email);

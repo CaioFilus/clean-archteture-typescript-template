@@ -1,9 +1,9 @@
 import AuthContext from "@/EnterpriseBusiness/contexts/AuthContext";
+import UserAlreadyInSystem from "@/EnterpriseBusiness/errors/UserAlreadyInSystem";
 import UseCase from "../useCase";
 import DatabaseError from "../../errors/DatabaseError";
 import LoginInvalidError from "../../errors/LoginInvalidError";
 import {UserType} from "../../entities/user.entity";
-import UserAlreadyInSystem from "@/EnterpriseBusiness/errors/UserAlreadyInSystem";
 
 
 export interface CreateUserForm {
