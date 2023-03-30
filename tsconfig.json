@@ -1,7 +1,7 @@
 {
    "compilerOptions": {
       "strict": true,
-      "lib": ["es5", "es6"],
+      "lib": ["es6"],
       "baseUrl": "./src",
       "paths": {
          "@/*": [
