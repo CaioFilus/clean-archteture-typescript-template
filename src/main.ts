@@ -17,5 +17,5 @@ const userHttpController = new UserHttpController(authProvider, UserCreateUseCas
 
 webserver.registerController(authHttpController);
 webserver.registerController(userHttpController);
-webserver.start();
+webserver.start(3000);
 

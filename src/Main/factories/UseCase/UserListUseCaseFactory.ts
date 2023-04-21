@@ -4,10 +4,9 @@ import UserCreateUseCase from "@/AplicationBusiness/useCases/user/UserCreateUseC
 import BcryptAdapter from "@/Main/adapters/BcryptAdapter";
 import typeOrmFactory from "@/Main/factories/repositories/TypeOrmFactory";
 import UserListUseCase from "@/AplicationBusiness/useCases/user/UserListUseCase";
+import UserModelFactory from "@/Main/factories/repositories/models/UserModelFactory";
 
 export default function UserListUseCaseFactory(){
-    const dataSource = typeOrmFactory();
-
-    const userRepository = new UserRepository(dataSource.main.models.user);
+    const userRepository = new UserRepository(UserModelFactory());
     return new UserListUseCase(userRepository);
 }

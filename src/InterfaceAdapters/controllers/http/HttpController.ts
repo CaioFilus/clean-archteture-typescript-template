@@ -1,36 +1,21 @@
-import {Result} from "ts-results";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import {HttpControllerFunction, IHttpController} from "@/InterfaceAdapters/gateway/http/HttpServer";
+import {HttpMethod, HttpResponse} from "@/InterfaceAdapters/gateway/http/Http.types";
 import TagError from "@/EnterpriseBusiness/errors/TagError";
+import UnknownError from "@/EnterpriseBusiness/errors/UnknownError";
+import LoginInvalidError from "@/EnterpriseBusiness/errors/LoginInvalidError";
 
-export type HttpOk = string | null | object;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export class HttpController implements IHttpController {
+	baseUrl = '';
 
-export type HttpResult = Result<HttpOk, TagError>;
+	endpoints: { url: string, method: HttpMethod, fn: HttpControllerFunction }[] = [];
 
-export type HttpHeaders = {
-    [key: string]: string
-};
-export type HttpQuery = {[key: string]: string | undefined | HttpQuery | HttpQuery[]};
-export enum HttpMethod {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    get = 'GET',
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    post = 'POST',
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    put = 'PUT',
-    delete = 'DELETE',
-}
-
-export interface HttpRequest<Body = unknown, Headers = HttpHeaders, Query =  HttpQuery> {
-    body: Body,
-    query: Query,
-    headers: Headers,
-    method: HttpMethod,
-    url: string,
-}
-
-export type HttpControllerFunction = (req: HttpRequest<unknown, HttpHeaders, HttpQuery>) => Promise<HttpResult>;
-
-export class HttpController {
-    baseUrl = '';
-
-    endpoints: { url: string, method: HttpMethod, fn: HttpControllerFunction }[] = [];
+	errorHandling(e: unknown): HttpResponse {
+		const error = e instanceof TagError? e : new UnknownError(String(e));
+		const code = error instanceof LoginInvalidError ? 401 : 500;
+		return {body: {type: error.tag, data: error.data, message: error.message}, status: code};
+	}
 }

@@ -5,14 +5,13 @@ import HashService from "@/InterfaceAdapters/services/HashService";
 import TokenService from "@/InterfaceAdapters/services/TokenService";
 import BcryptAdapter from "@/Main/adapters/BcryptAdapter";
 import {ILoginUseCase} from "@/EnterpriseBusiness/useCases/auth/LoginUseCases";
-import typeOrmFactory from "@/Main/factories/repositories/TypeOrmFactory";
+import UserModelFactory from "@/Main/factories/repositories/models/UserModelFactory";
 
 
 export default function LoginUseCaseFactory(): ILoginUseCase {
-    const dataSources = typeOrmFactory();
     const hashService = new HashService(new BcryptAdapter());
     const tokenService = new TokenService(new JwtAdapter());
-    const userRepository = new UserRepository(dataSources.main.models.user);
+    const userRepository = new UserRepository(UserModelFactory());
     return new LoginUseCase(userRepository, hashService, tokenService);
 
 }

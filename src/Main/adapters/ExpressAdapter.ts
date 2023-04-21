@@ -1,13 +1,18 @@
-import {Express, Request, Response} from "express";
-import {
-    HttpController,
-    HttpControllerFunction,
-    HttpHeaders, HttpMethod, HttpQuery,
-    HttpRequest
-} from "@/InterfaceAdapters/controllers/http/HttpController";
-import {HttpServer} from "@/InterfaceAdapters/adapters/HttpServer";
+import {Express, json, Request, Response} from "express";
+
 import {Result} from "ts-results";
 import UnknownError from "@/EnterpriseBusiness/errors/UnknownError";
+import {HttpControllerFunction, HttpServer} from "@/InterfaceAdapters/gateway/http/HttpServer";
+import {HttpController} from "@/InterfaceAdapters/controllers/http/HttpController";
+import {
+    HttpHeaders,
+    HttpMethod,
+    HttpQuery,
+    HttpRequest,
+    HttpResponse
+} from "@/InterfaceAdapters/gateway/http/Http.types";
+import {IncomingMessage, ServerResponse} from "http";
+import IHttpServerAdapter from "@/InterfaceAdapters/adapters/HttpServer";
 
 
 async function expressEndpointWrap(req: Request, res : Response, fn: HttpControllerFunction, controller: HttpController) {
@@ -39,54 +44,35 @@ async function expressEndpointWrap(req: Request, res : Response, fn: HttpControl
     }
 }
 
-export default class ExpressAdapter implements HttpServer {
+export default class ExpressAdapter implements IHttpServerAdapter {
     private express: Express
 
     constructor(express: Express) {
         this.express = express;
+        express.use(json());
     }
 
-    registerController(controller: HttpController) {
-        controller.endpoints.forEach(endpoint => {
-            // eslint-disable-next-line no-console
-            console.log(`Registering endpoint: ${endpoint.method} ${endpoint.url}`);
-            // eslint-disable-next-line default-case
-            switch (endpoint.method) {
-                case HttpMethod.get:
-                    this.express.get(
-                        endpoint.url,
-                        (req, res) => expressEndpointWrap(req, res, endpoint.fn, controller)
-                    );
-                    break;
-                case HttpMethod.post:
-                    this.express.post(
-                        endpoint.url,
-                        (req, res) => expressEndpointWrap(req, res, endpoint.fn, controller)
-                    );
-                    break;
-                case HttpMethod.put:
-                    this.express.put(
-                        endpoint.url,
-                        (req, res) => expressEndpointWrap(req, res, endpoint.fn, controller)
-                    );
-                    break;
-                case HttpMethod.delete:
-                    this.express.delete(
-                        endpoint.url,
-                        (req, res) => expressEndpointWrap(req, res, endpoint.fn, controller)
-                    );
-                    break;
-            }
-        });
-    }
-
-    start(): Promise<void> {
-        this.express.listen(3000);
-        console.log(`Http Server Started at Port: 3000`);
-        return Promise.resolve()
+    start(port: number): Promise<void> {
+        this.express.listen(port)
+        return Promise.resolve();
     }
 
     stop(): Promise<void> {
         return Promise.resolve()
+    }
+
+    setOnRequest(fn: (req: HttpRequest) => Promise<HttpResponse>): void {
+        this.express.use(async (req: Request, res: Response) => {
+            const response = await fn({
+                url: req.url || '',
+                body:  req.body,
+                headers: req.headers as HttpHeaders,
+                method: req.method as HttpMethod,
+                query: req.query as HttpQuery,
+            });
+            res.status(response.status);
+            Object.keys(response.headers || {}).forEach((key) => res.setHeader(key, response.headers![key]));
+            res.send(response.body);
+        });
     }
 }
